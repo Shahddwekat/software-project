@@ -1,5 +1,7 @@
 package edu.najah.software.service;
 
-public class AuthService {
-
+public interface AuthService {
+    boolean login(String username, String password);
+    void logout();
+    boolean isLoggedIn();
 }
