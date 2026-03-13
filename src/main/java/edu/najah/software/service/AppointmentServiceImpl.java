@@ -2,6 +2,7 @@ package edu.najah.software.service;
 
 import edu.najah.software.domain.Appointment;
 import edu.najah.software.domain.TimeSlot;
+import edu.najah.software.observer.Observer;
 import edu.najah.software.repository.AppointmentRepository;
 import edu.najah.software.strategy.BookingRuleStrategy;
 import edu.najah.software.strategy.DurationRule;
@@ -13,49 +14,57 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Implementation of AppointmentService.
+ * Uses Strategy pattern for booking rules
+ * and Observer pattern for notifications.
+ *
+ * @author Team
+ * @version 1.0
+ */
 public class AppointmentServiceImpl implements AppointmentService {
 
-    /** Repository for storing and retrieving appointments. */
     private final AppointmentRepository repository;
-
     private final AuthService authService;
-
-    /** List of booking rules applied using the Strategy pattern. */
     private final List<BookingRuleStrategy> bookingRules;
+    private final List<Observer> observers;
 
-    /**
-     * Constructs the service with the given repository and auth service.
-     * Initializes default booking rules (duration and participant limits).
-     *
-     * @param repository  the appointment repository
-     * @param authService the authentication service
-     */
     public AppointmentServiceImpl(AppointmentRepository repository, AuthService authService) {
         this.repository = repository;
         this.authService = authService;
         this.bookingRules = new ArrayList<>();
         this.bookingRules.add(new DurationRule());
         this.bookingRules.add(new ParticipantLimitRule());
+        this.observers = new ArrayList<>();
     }
 
-    /**
-     * Returns all available time slots for the given date.
-     * Requires admin to be logged in.
-     *
-     * @param date the date to check
-     * @return list of available TimeSlots
-     * @throws IllegalStateException if admin is not logged in
-     */
+    // Add an observer to the notification list
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    // Remove an observer from the notification list
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    // Send a message to all registered observers
+    private void notifyObservers(Appointment appointment, String message) {
+        for (Observer observer : observers) {
+            observer.update(appointment, message);
+        }
+    }
+
+    // Returns free slots for the day — admin login required
     @Override
     public List<TimeSlot> getAvailableSlots(LocalDate date) {
         if (!authService.isLoggedIn()) {
             throw new IllegalStateException("Admin must be logged in to view available slots.");
         }
-
         List<TimeSlot> dailyTemplate = buildDailyTemplate(date);
         List<TimeSlot> booked = repository.getBookedSlotsForDate(date);
-
         List<TimeSlot> available = new ArrayList<>();
         for (TimeSlot slot : dailyTemplate) {
             if (!booked.contains(slot)) {
@@ -65,22 +74,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         return available;
     }
 
-    /**
-     * Books a new appointment after validating all booking rules.
-     * Saves the appointment and marks the corresponding slot as booked.
-     *
-     * @param id           unique appointment ID
-     * @param dateTime     date and time of the appointment
-     * @param duration     duration in minutes
-     * @param participants number of participants
-     * @return the confirmed Appointment object
-     * @throws IllegalArgumentException if any booking rule is violated
-     */
+    // Books an appointment if it passes all rules, then notifies observers
     @Override
     public Appointment bookAppointment(String id, LocalDateTime dateTime, int duration, int participants) {
         Appointment appointment = new Appointment(id, dateTime, duration, participants);
 
-        // Apply all booking rules using the Strategy pattern
+        // Check all booking rules
         for (BookingRuleStrategy rule : bookingRules) {
             if (!rule.isValid(appointment)) {
                 throw new IllegalArgumentException(rule.getErrorMessage());
@@ -89,7 +88,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         repository.save(appointment);
 
-        // Mark the time slot as booked
+        // Mark the slot as booked
         TimeSlot slot = new TimeSlot(
                 dateTime.toLocalDate(),
                 dateTime.toLocalTime(),
@@ -97,18 +96,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         );
         repository.saveBookedSlot(slot);
 
+        // Notify observers about the new booking
+        notifyObservers(appointment, "Reminder: Your appointment is scheduled for " + dateTime);
+
         System.out.println("Appointment booked successfully. Status = " + appointment.getStatus());
         return appointment;
     }
 
-    /**
-     * Cancels an existing appointment by ID.
-     * Only future appointments can be cancelled.
-     *
-     * @param appointmentId the ID of the appointment to cancel
-     * @throws IllegalArgumentException if the appointment is not found
-     * @throws IllegalStateException    if the appointment is not in the future
-     */
+    // Cancels a future appointment and notifies observers
     @Override
     public void cancelAppointment(String appointmentId) {
         List<Appointment> all = repository.getAll();
@@ -118,6 +113,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                     throw new IllegalStateException("Cannot cancel a past appointment.");
                 }
                 appointment.setStatus("Cancelled");
+                // Notify observers about the cancellation
+                notifyObservers(appointment, "Your appointment on "
+                        + appointment.getDateTime() + " has been cancelled.");
                 System.out.println("Appointment " + appointmentId + " has been cancelled.");
                 return;
             }
@@ -125,22 +123,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         throw new IllegalArgumentException("Appointment not found: " + appointmentId);
     }
 
-    /**
-     * Returns all appointments currently stored in the repository.
-     *
-     * @return list of all appointments
-     */
+    // Returns all saved appointments
     @Override
     public List<Appointment> getAllAppointments() {
         return repository.getAll();
     }
 
-    /**
-     * Builds a daily template of 1-hour time slots from 09:00 to 17:00.
-     *
-     * @param date the date to build the template for
-     * @return list of TimeSlots covering the working day
-     */
+    // Builds 8 hourly slots from 9am to 5pm for a given day
     private List<TimeSlot> buildDailyTemplate(LocalDate date) {
         List<TimeSlot> slots = new ArrayList<>();
         LocalTime start = LocalTime.of(9, 0);
