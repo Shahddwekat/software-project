@@ -22,8 +22,21 @@ public interface AppointmentService {
     // Books a new appointment after validating all rules
     Appointment bookAppointment(String id, LocalDateTime dateTime, int duration, int participants);
 
-    // Cancels a future appointment by ID
+    // --- User actions (US4.1) ---
+
+    // Cancels the user's own future appointment
     void cancelAppointment(String appointmentId);
+
+    // Modifies the date/time of the user's own future appointment
+    void modifyAppointment(String appointmentId, LocalDateTime newDateTime);
+
+    // --- Admin actions (US4.2) ---
+
+    // Admin cancels any appointment — requires admin to be logged in
+    void adminCancelAppointment(String appointmentId);
+
+    // Admin modifies any appointment — requires admin to be logged in
+    void adminModifyAppointment(String appointmentId, LocalDateTime newDateTime);
 
     // Returns all appointments in the system
     List<Appointment> getAllAppointments();

@@ -103,30 +103,73 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment;
     }
 
-    // Cancels a future appointment and notifies observers
+    // --- User actions (US4.1) ---
+
+    // User cancels their own future appointment
     @Override
     public void cancelAppointment(String appointmentId) {
-        List<Appointment> all = repository.getAll();
-        for (Appointment appointment : all) {
-            if (appointment.getId().equals(appointmentId)) {
-                if (appointment.getDateTime().isBefore(LocalDateTime.now())) {
-                    throw new IllegalStateException("Cannot cancel a past appointment.");
-                }
-                appointment.setStatus("Cancelled");
-                // Notify observers about the cancellation
-                notifyObservers(appointment, "Your appointment on "
-                        + appointment.getDateTime() + " has been cancelled.");
-                System.out.println("Appointment " + appointmentId + " has been cancelled.");
-                return;
-            }
+        Appointment appointment = findFutureAppointment(appointmentId);
+        appointment.setStatus("Cancelled");
+        notifyObservers(appointment, "Your appointment on "
+                + appointment.getDateTime() + " has been cancelled.");
+        System.out.println("Appointment " + appointmentId + " has been cancelled.");
+    }
+
+    // User modifies the date/time of their own future appointment
+    @Override
+    public void modifyAppointment(String appointmentId, LocalDateTime newDateTime) {
+        Appointment appointment = findFutureAppointment(appointmentId);
+        appointment.setDateTime(newDateTime);
+        notifyObservers(appointment, "Your appointment has been rescheduled to " + newDateTime);
+        System.out.println("Appointment " + appointmentId + " has been modified to " + newDateTime);
+    }
+
+    // --- Admin actions (US4.2) ---
+
+    // Admin cancels any appointment — must be logged in
+    @Override
+    public void adminCancelAppointment(String appointmentId) {
+        if (!authService.isLoggedIn()) {
+            throw new IllegalStateException("Admin must be logged in to cancel appointments.");
         }
-        throw new IllegalArgumentException("Appointment not found: " + appointmentId);
+        Appointment appointment = findFutureAppointment(appointmentId);
+        appointment.setStatus("Cancelled");
+        notifyObservers(appointment, "Your appointment on "
+                + appointment.getDateTime() + " was cancelled by the administrator.");
+        System.out.println("Admin cancelled appointment " + appointmentId);
+    }
+
+    // Admin modifies any appointment — must be logged in
+    @Override
+    public void adminModifyAppointment(String appointmentId, LocalDateTime newDateTime) {
+        if (!authService.isLoggedIn()) {
+            throw new IllegalStateException("Admin must be logged in to modify appointments.");
+        }
+        Appointment appointment = findFutureAppointment(appointmentId);
+        appointment.setDateTime(newDateTime);
+        notifyObservers(appointment, "Your appointment has been rescheduled to "
+                + newDateTime + " by the administrator.");
+        System.out.println("Admin modified appointment " + appointmentId + " to " + newDateTime);
     }
 
     // Returns all saved appointments
     @Override
     public List<Appointment> getAllAppointments() {
         return repository.getAll();
+    }
+
+    // Helper — finds a future appointment by ID or throws an error
+    private Appointment findFutureAppointment(String appointmentId) {
+        List<Appointment> all = repository.getAll();
+        for (Appointment appointment : all) {
+            if (appointment.getId().equals(appointmentId)) {
+                if (appointment.getDateTime().isBefore(LocalDateTime.now())) {
+                    throw new IllegalStateException("Cannot modify or cancel a past appointment.");
+                }
+                return appointment;
+            }
+        }
+        throw new IllegalArgumentException("Appointment not found: " + appointmentId);
     }
 
     // Builds 8 hourly slots from 9am to 5pm for a given day

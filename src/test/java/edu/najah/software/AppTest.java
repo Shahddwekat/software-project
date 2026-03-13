@@ -10,11 +10,13 @@ import edu.najah.software.service.AppointmentService;
 import edu.najah.software.service.AppointmentServiceImpl;
 import edu.najah.software.service.AuthService;
 import edu.najah.software.service.SimpleAuthService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for Sprint 1, 2 and 3.
+ * Unit tests for Sprint 1, 2, 3 and 4.
  *
  * @author Team
  * @version 1.0
@@ -184,5 +186,69 @@ public class AppTest {
         // Observer was removed so should get nothing
         verify(notificationService, never())
                 .sendNotification(any(Appointment.class), anyString());
+    }
+
+    // --- Sprint 4: Modify & Cancel ---
+
+    // User cancels their own future appointment
+    @Test
+    void testUserCancelAppointment() {
+        appointmentService.bookAppointment("B1", LocalDateTime.now().plusDays(1), 60, 2);
+        appointmentService.cancelAppointment("B1");
+        assertEquals("Cancelled", appointmentService.getAllAppointments().get(0).getStatus());
+    }
+
+    // User modifies the time of their future appointment
+    @Test
+    void testUserModifyAppointment() {
+        appointmentService.bookAppointment("B2", LocalDateTime.now().plusDays(1), 60, 2);
+        LocalDateTime newTime = LocalDateTime.now().plusDays(3);
+        appointmentService.modifyAppointment("B2", newTime);
+        assertEquals(newTime, appointmentService.getAllAppointments().get(0).getDateTime());
+    }
+
+    // Modifying a non-existent appointment should throw an error
+    @Test
+    void testModifyNonExistentAppointment() {
+        assertThrows(IllegalArgumentException.class, () ->
+                appointmentService.modifyAppointment("FAKE_ID", LocalDateTime.now().plusDays(1))
+        );
+    }
+
+    // Admin can cancel any appointment when logged in
+    @Test
+    void testAdminCancelAppointment() {
+        appointmentService.bookAppointment("B3", LocalDateTime.now().plusDays(1), 60, 2);
+        authService.login("admin", "admin123");
+        appointmentService.adminCancelAppointment("B3");
+        assertEquals("Cancelled", appointmentService.getAllAppointments().get(0).getStatus());
+    }
+
+    // Admin can modify any appointment when logged in
+    @Test
+    void testAdminModifyAppointment() {
+        appointmentService.bookAppointment("B4", LocalDateTime.now().plusDays(1), 60, 2);
+        authService.login("admin", "admin123");
+        LocalDateTime newTime = LocalDateTime.now().plusDays(5);
+        appointmentService.adminModifyAppointment("B4", newTime);
+        assertEquals(newTime, appointmentService.getAllAppointments().get(0).getDateTime());
+    }
+
+    // Admin actions without login should be rejected
+    @Test
+    void testAdminCancelWithoutLogin() {
+        appointmentService.bookAppointment("B5", LocalDateTime.now().plusDays(1), 60, 2);
+        assertThrows(IllegalStateException.class, () ->
+                appointmentService.adminCancelAppointment("B5")
+        );
+    }
+
+    // Admin modify without login should be rejected
+    @Test
+    void testAdminModifyWithoutLogin() {
+        appointmentService.bookAppointment("B6", LocalDateTime.now().plusDays(1), 60, 2);
+        assertThrows(IllegalStateException.class, () ->
+                appointmentService.adminModifyAppointment("B6", LocalDateTime.now().plusDays(2))
+        );
     }
 }
