@@ -3,22 +3,20 @@ package edu.najah.software.strategy;
 import edu.najah.software.domain.Appointment;
 
 /**
- * Booking rule that enforces a maximum number of participants per appointment.
- * Rejects any appointment that exceeds the allowed participant limit.
- *
+ * Makes sure no appointment has more than 5 participants
+ * If someone tries to book with 6 or more people, we reject it
  * @author Team
  * @version 1.0
  */
 public class ParticipantLimitRule implements BookingRuleStrategy {
 
-    /** Maximum allowed number of participants per appointment. */
+    /** The maximum number of people allowed in one appointment */
     private static final int MAX_PARTICIPANTS = 5;
 
     /**
-     * Checks whether the number of participants is within the allowed limit.
-     *
-     * @param appointment the appointment to validate
-     * @return true if participants are within limit, false otherwise
+     * Checks if the number of participants is within the allowed limit
+     * @param appointment the appointment to check
+     * @return true if participants are 5 or fewer
      */
     @Override
     public boolean isValid(Appointment appointment) {
@@ -26,9 +24,8 @@ public class ParticipantLimitRule implements BookingRuleStrategy {
     }
 
     /**
-     * Returns the error message for a participant limit violation.
-     *
-     * @return error message string
+     * Returns the message we show when too many people are booked
+     * @return the error message
      */
     @Override
     public String getErrorMessage() {

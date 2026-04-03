@@ -2,6 +2,7 @@ package edu.najah.software;
 
 import edu.najah.software.domain.Appointment;
 import edu.najah.software.domain.TimeSlot;
+import edu.najah.software.domain.appointmenttype.AppointmentType;
 import edu.najah.software.observer.NotificationObserver;
 import edu.najah.software.observer.NotificationService;
 import edu.najah.software.repository.AppointmentRepository;
@@ -10,23 +11,19 @@ import edu.najah.software.service.AppointmentService;
 import edu.najah.software.service.AppointmentServiceImpl;
 import edu.najah.software.service.AuthService;
 import edu.najah.software.service.SimpleAuthService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for Sprint 1, 2, 3 and 4.
- *
+ * Unit tests for Sprint 1, 2, 3, 4, 5
  * @author Team
  * @version 1.0
  */
@@ -35,12 +32,8 @@ public class AppTest {
 
     private AuthService authService;
     private AppointmentService appointmentService;
-
-    // Mockito creates a fake NotificationService — no real messages sent
     @Mock
     private NotificationService notificationService;
-
-    // Fresh setup before every test
     @BeforeEach
     void setUp() {
         AppointmentRepository repository = new InMemoryAppointmentRepository();
@@ -48,7 +41,7 @@ public class AppTest {
         appointmentService = new AppointmentServiceImpl(repository, authService);
     }
 
-    // --- Sprint 1: Auth ---
+    // Sprint 1: Auth
 
     @Test
     void testLoginWithValidCredentials() {
@@ -81,7 +74,7 @@ public class AppTest {
         assertEquals(8, slots.size());
     }
 
-    // --- Sprint 2: Booking Rules ---
+    //Sprint 2: Booking Rules 
 
     @Test
     void testBookAppointmentSuccess() {
@@ -126,8 +119,7 @@ public class AppTest {
     void testCancelFutureAppointment() {
         appointmentService.bookAppointment("A6", LocalDateTime.now().plusDays(1), 60, 2);
         appointmentService.cancelAppointment("A6");
-        List<Appointment> all = appointmentService.getAllAppointments();
-        assertEquals("Cancelled", all.get(0).getStatus());
+        assertEquals("Cancelled", appointmentService.getAllAppointments().get(0).getStatus());
     }
 
     @Test
@@ -137,42 +129,31 @@ public class AppTest {
         );
     }
 
-    // --- Sprint 3: Notifications ---
+    // Sprint 3: Notifications
 
     @Test
     void testObserverNotifiedOnBooking() {
         NotificationObserver observer = new NotificationObserver(notificationService);
         appointmentService.addObserver(observer);
-
         Appointment appointment = appointmentService.bookAppointment(
                 "A7", LocalDateTime.now().plusDays(1), 60, 2
         );
-
-        // Should be called once when booking
-        verify(notificationService, times(1))
-                .sendNotification(eq(appointment), anyString());
+        verify(notificationService, times(1)).sendNotification(eq(appointment), anyString());
     }
 
     @Test
     void testObserverNotifiedOnCancellation() {
         NotificationObserver observer = new NotificationObserver(notificationService);
         appointmentService.addObserver(observer);
-
         appointmentService.bookAppointment("A8", LocalDateTime.now().plusDays(1), 60, 2);
         appointmentService.cancelAppointment("A8");
-
-        // Once for booking, once for cancellation
-        verify(notificationService, times(2))
-                .sendNotification(any(Appointment.class), anyString());
+        verify(notificationService, times(2)).sendNotification(any(Appointment.class), anyString());
     }
 
     @Test
     void testNoNotificationWithoutObserver() {
         appointmentService.bookAppointment("A9", LocalDateTime.now().plusDays(1), 60, 2);
-
-        // No observer registered so should never be called
-        verify(notificationService, never())
-                .sendNotification(any(Appointment.class), anyString());
+        verify(notificationService, never()).sendNotification(any(Appointment.class), anyString());
     }
 
     @Test
@@ -180,17 +161,12 @@ public class AppTest {
         NotificationObserver observer = new NotificationObserver(notificationService);
         appointmentService.addObserver(observer);
         appointmentService.removeObserver(observer);
-
         appointmentService.bookAppointment("A10", LocalDateTime.now().plusDays(1), 60, 2);
-
-        // Observer was removed so should get nothing
-        verify(notificationService, never())
-                .sendNotification(any(Appointment.class), anyString());
+        verify(notificationService, never()).sendNotification(any(Appointment.class), anyString());
     }
 
-    // --- Sprint 4: Modify & Cancel ---
+    //Sprint 4: Modify & Cancel
 
-    // User cancels their own future appointment
     @Test
     void testUserCancelAppointment() {
         appointmentService.bookAppointment("B1", LocalDateTime.now().plusDays(1), 60, 2);
@@ -198,7 +174,6 @@ public class AppTest {
         assertEquals("Cancelled", appointmentService.getAllAppointments().get(0).getStatus());
     }
 
-    // User modifies the time of their future appointment
     @Test
     void testUserModifyAppointment() {
         appointmentService.bookAppointment("B2", LocalDateTime.now().plusDays(1), 60, 2);
@@ -207,7 +182,6 @@ public class AppTest {
         assertEquals(newTime, appointmentService.getAllAppointments().get(0).getDateTime());
     }
 
-    // Modifying a non-existent appointment should throw an error
     @Test
     void testModifyNonExistentAppointment() {
         assertThrows(IllegalArgumentException.class, () ->
@@ -215,7 +189,6 @@ public class AppTest {
         );
     }
 
-    // Admin can cancel any appointment when logged in
     @Test
     void testAdminCancelAppointment() {
         appointmentService.bookAppointment("B3", LocalDateTime.now().plusDays(1), 60, 2);
@@ -224,7 +197,6 @@ public class AppTest {
         assertEquals("Cancelled", appointmentService.getAllAppointments().get(0).getStatus());
     }
 
-    // Admin can modify any appointment when logged in
     @Test
     void testAdminModifyAppointment() {
         appointmentService.bookAppointment("B4", LocalDateTime.now().plusDays(1), 60, 2);
@@ -234,7 +206,6 @@ public class AppTest {
         assertEquals(newTime, appointmentService.getAllAppointments().get(0).getDateTime());
     }
 
-    // Admin actions without login should be rejected
     @Test
     void testAdminCancelWithoutLogin() {
         appointmentService.bookAppointment("B5", LocalDateTime.now().plusDays(1), 60, 2);
@@ -243,12 +214,104 @@ public class AppTest {
         );
     }
 
-    // Admin modify without login should be rejected
     @Test
     void testAdminModifyWithoutLogin() {
         appointmentService.bookAppointment("B6", LocalDateTime.now().plusDays(1), 60, 2);
         assertThrows(IllegalStateException.class, () ->
                 appointmentService.adminModifyAppointment("B6", LocalDateTime.now().plusDays(2))
         );
+    }
+
+    // Sprint 5: Appointment Types
+
+    // Urgent appointment with valid rules
+    @Test
+    void testUrgentAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C1", LocalDateTime.now().plusDays(1), 30, 2, AppointmentType.URGENT
+        );
+        assertEquals(AppointmentType.URGENT, a.getType());
+        assertEquals("Confirmed", a.getStatus());
+    }
+
+    // Urgent appointment that breaks the type rule
+    @Test
+    void testUrgentAppointmentInvalidDuration() {
+        assertThrows(IllegalArgumentException.class, () ->
+                appointmentService.bookAppointment(
+                        "C2", LocalDateTime.now().plusDays(1), 60, 2, AppointmentType.URGENT)
+        );
+    }
+
+    // Followup appointment with valid rules
+    @Test
+    void testFollowUpAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C3", LocalDateTime.now().plusDays(1), 60, 2, AppointmentType.FOLLOW_UP
+        );
+        assertEquals(AppointmentType.FOLLOW_UP, a.getType());
+    }
+
+    // Virtual appointment with valid rules
+    @Test
+    void testVirtualAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C4", LocalDateTime.now().plusDays(1), 90, 5, AppointmentType.VIRTUAL
+        );
+        assertEquals(AppointmentType.VIRTUAL, a.getType());
+    }
+
+    // Group appointment with valid rules
+    @Test
+    void testGroupAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C5", LocalDateTime.now().plusDays(1), 120, 4, AppointmentType.GROUP
+        );
+        assertEquals(AppointmentType.GROUP, a.getType());
+    }
+
+    // Group appointment with too few participants
+    @Test
+    void testGroupAppointmentTooFewParticipants() {
+        assertThrows(IllegalArgumentException.class, () ->
+                appointmentService.bookAppointment(
+                        "C6", LocalDateTime.now().plusDays(1), 60, 2, AppointmentType.GROUP)
+        );
+    }
+
+    // Individual appointment with valid rules
+    @Test
+    void testIndividualAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C7", LocalDateTime.now().plusDays(1), 60, 1, AppointmentType.INDIVIDUAL
+        );
+        assertEquals(AppointmentType.INDIVIDUAL, a.getType());
+    }
+
+    // Individual appointment with more than 1 participant
+    @Test
+    void testIndividualAppointmentInvalidParticipants() {
+        assertThrows(IllegalArgumentException.class, () ->
+                appointmentService.bookAppointment(
+                        "C8", LocalDateTime.now().plusDays(1), 60, 2, AppointmentType.INDIVIDUAL)
+        );
+    }
+
+    // Assessment appointment with valid rules
+    @Test
+    void testAssessmentAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C9", LocalDateTime.now().plusDays(1), 120, 3, AppointmentType.ASSESSMENT
+        );
+        assertEquals(AppointmentType.ASSESSMENT, a.getType());
+    }
+
+    // In person appointment with valid rules
+    @Test
+    void testInPersonAppointmentValid() {
+        Appointment a = appointmentService.bookAppointment(
+                "C10", LocalDateTime.now().plusDays(1), 60, 3, AppointmentType.IN_PERSON
+        );
+        assertEquals(AppointmentType.IN_PERSON, a.getType());
     }
 }

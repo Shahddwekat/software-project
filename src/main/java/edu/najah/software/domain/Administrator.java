@@ -1,27 +1,25 @@
 package edu.najah.software.domain;
 
 /**
- * Represents an administrator who can manage the appointment scheduling system.
- * Extends User with additional admin privileges.
- *
+ * An admin who has extra powers in the system
+ * Admins can manage any appointment not just their own
+ * This class extends User because an admin is still a user at the end of the day
  * @author Team
  * @version 1.0
  */
 public class Administrator extends User {
 
-    /** Unique identifier for the administrator. */
+    /** A separate ID just for admin purposes. */
     private String adminId;
-
-    /** Indicates whether the administrator has active privileges. */
+    /** Tracks whether this admin account is currently active. */
     private boolean active;
-
     /**
-     * Constructs a new Administrator.
-     *
-     * @param userId  unique user ID
-     * @param name    full name
-     * @param email   email address
-     * @param adminId unique admin ID
+     * Creates a new admin account with the given details.
+     * The account starts as active by default.
+     * @param userId the user ID inherited from User
+     * @param name the full name of the admin
+     * @param email the admin's email address
+     * @param adminId a unique ID specific to this admin
      */
     public Administrator(String userId, String name, String email, String adminId) {
         super(userId, name, email);
@@ -30,20 +28,21 @@ public class Administrator extends User {
     }
 
     /**
-     * Returns the administrator's unique admin ID.
-     * @return adminId
+     * Returns the admin-specific ID.
+     *
+     * @return the admin ID
      */
     public String getAdminId() { return adminId; }
 
     /**
-     * Returns whether this administrator is active.
-     * @return true if active, false otherwise
+     * Tells us whether this admin account is currently active.
+     * @return true if active, false if deactivated
      */
     public boolean isActive() { return active; }
 
     /**
-     * Sets the active status of this administrator.
-     * @param active the new active status
+     * Activate or deactivates this admin account
+     * @param active pass true to activate false to deactivate
      */
     public void setActive(boolean active) { this.active = active; }
 

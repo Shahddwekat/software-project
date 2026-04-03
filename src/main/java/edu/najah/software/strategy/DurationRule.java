@@ -3,22 +3,19 @@ package edu.najah.software.strategy;
 import edu.najah.software.domain.Appointment;
 
 /**
- * Booking rule that enforces a maximum appointment duration.
- * Rejects any appointment that exceeds the allowed duration limit.
- *
+ * Makes sure no appointment lasts longer than 2 hours
+ * Anything over 120 minutes gets rejected
  * @author Team
  * @version 1.0
  */
 public class DurationRule implements BookingRuleStrategy {
 
-    /** Maximum allowed duration for an appointment in minutes. */
+    /** The longest an appointment is allowed to be, in minutes */
     private static final int MAX_DURATION = 120;
-
     /**
-     * Checks whether the appointment duration is within the allowed limit.
-     *
-     * @param appointment the appointment to validate
-     * @return true if duration is within limit, false otherwise
+     * Checks if the appointment duration is within the allowed limit
+     * @param appointment the appointment to check
+     * @return true if the duration is 120 minutes or less
      */
     @Override
     public boolean isValid(Appointment appointment) {
@@ -26,9 +23,8 @@ public class DurationRule implements BookingRuleStrategy {
     }
 
     /**
-     * Returns the error message for a duration rule violation.
-     *
-     * @return error message string
+     * Returns the message we show when an appointment is too long
+     * @return the error message
      */
     @Override
     public String getErrorMessage() {

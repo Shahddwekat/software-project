@@ -1,55 +1,54 @@
 package edu.najah.software.domain;
 
 /**
- * Represents a regular user of the appointment scheduling system.
- *
+ * Represents a person who uses the system to book appointments.
+ * Every user has a unique ID, a name, and an email address.
  * @author Team
  * @version 1.0
  */
 public class User {
 
-    /** Unique identifier for the user. */
+    /** The unique ID that identifies this user. */
     private String userId;
-
-    /** Full name of the user. */
+    /** The full name of the user. */
     private String name;
-
-    /** Email address of the user. */
+    /** The email address we use to reach this user. */
     private String email;
 
     /**
-     * Constructs a new User with the given details.
-     *
-     * @param userId unique ID for this user
-     * @param name   full name of the user
-     * @param email  email address of the user
+     * Creates a new user with all their basic details
+     * @param userId a unique ID for this user
+     * @param name the full name of the user
+     * @param email the email address of the user
      */
     public User(String userId, String name, String email) {
+    	
         this.userId = userId;
         this.name = name;
         this.email = email;
     }
 
     /**
-     * Returns the user's unique ID.
-     * @return userId
+     * Returns the unique ID of this user.
+     * @return the user ID
      */
     public String getUserId() { return userId; }
 
     /**
-     * Returns the user's full name.
-     * @return name
+     * Returns the full name of this user
+     * @return the user's name
      */
     public String getName() { return name; }
 
     /**
-     * Returns the user's email address.
-     * @return email
+     * Returns the email address of this user
+     * @return the user's email
      */
     public String getEmail() { return email; }
 
     @Override
     public String toString() {
-        return "User{userId='" + userId + "', name='" + name + "', email='" + email + "'}";
+    	
+        return "User{UserId='" + userId + "', Name='" + name + "', Email='" + email + "'}";
     }
 }

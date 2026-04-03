@@ -5,29 +5,28 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 /**
- * Represents a time slot with a specific date, start time, and end time.
- * Used to track available and booked appointment windows.
- *
+ * Represents specific time window on a given day
+ * We use this to track which slots are available and which ones are taken
+ * EX: March 13, 2026 from 9:00 to 10:00.
  * @author Team
  * @version 1.0
  */
 public class TimeSlot {
 
-    /** The date of this time slot. */
+    /** The date this slot belongs to*/
     private final LocalDate date;
 
-    /** The start time of this time slot. */
+    /** The time this slot starts */
     private final LocalTime start;
 
-    /** The end time of this time slot. */
+    /** The time this slot end */
     private final LocalTime end;
 
     /**
-     * Constructs a new TimeSlot.
-     *
-     * @param date  the date of the slot
-     * @param start the start time
-     * @param end   the end time
+     * Create a new time slot with a date start time and end time
+     * @param date the date of this slot
+     * @param start what time the slot starts
+     * @param end what time the slot ends
      */
     public TimeSlot(LocalDate date, LocalTime start, LocalTime end) {
         this.date = date;
@@ -36,20 +35,22 @@ public class TimeSlot {
     }
 
     /**
-     * Returns the date of this slot.
-     * @return date
+     * Returns the date of this slot
+     * @return the date
      */
     public LocalDate getDate() { return date; }
 
     /**
-     * Returns the start time of this slot.
-     * @return start time
+     * Returns the start time of this slot
+     * @return the start time
      */
-    public LocalTime getStart() { return start; }
+    public LocalTime getStart() { 
+    	return start; 
+    	}
 
     /**
-     * Returns the end time of this slot.
-     * @return end time
+     * returns the end time of this slot
+     * @return the end time
      */
     public LocalTime getEnd() { return end; }
 

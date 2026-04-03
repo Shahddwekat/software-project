@@ -2,40 +2,41 @@ package edu.najah.software.repository;
 
 import edu.najah.software.domain.Appointment;
 import edu.najah.software.domain.TimeSlot;
-
 import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Interface defining the contract for appointment storage operations.
- *
+ * This interface defines how we store and retrieve appointments
+ * Any class that wants to act as storage must implement these methods
+ * Right now we use in memory list but this could be swapped for a database later
  * @author Team
  * @version 1.0
  */
 public interface AppointmentRepository {
 
     /**
-     * Saves an appointment to the repository.
-     * @param appointment the appointment to save
+     * Saves a new appointment to wherever we're storing data
+     * @param appointment the appointment we want to save
      */
     void save(Appointment appointment);
 
     /**
-     * Returns all saved appointments.
-     * @return list of all appointments
+     * Returns every appointment that has been saved so far
+     * @return a list of all appointments
      */
     List<Appointment> getAll();
 
     /**
-     * Returns all booked time slots for a given date.
-     * @param date the date to check
-     * @return list of booked TimeSlots on that date
+     * Returns all the time slots that are already booked on a specific day
+     * We use this to figure out which slots are still free
+     * @param date the day we want to check
+     * @return a list of booked time slots on that day
      */
     List<TimeSlot> getBookedSlotsForDate(LocalDate date);
 
     /**
-     * Saves a booked time slot.
-     * @param slot the TimeSlot to mark as booked
+     * Marks a time slot as booked so no one else can take it
+     * @param slot the time slot to mark as taken
      */
     void saveBookedSlot(TimeSlot slot);
 }
