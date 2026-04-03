@@ -95,4 +95,4 @@ mvn test
 
 You'll notice that in every class we added comments explaining how things work and why we wrote them that way not just what the code does but the thinking behind it. We did this to make it easier for ourselves to come back to later, and so that any other developer reading the code can actually understand what we were going for without having to guess.
 
-Everything is documented with Javadoc. We used an in-memory list instead of a real database since this is phase 1 — that can be swapped out later without touching the service or domain layers since we coded to interfaces throughout.
+Everything is documented with Javadoc. We used an in memory list instead of a real database since this is phase 1 that can be swapped out later without touching the service or domain layers since we coded to interfaces throughout.
