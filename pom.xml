@@ -8,7 +8,6 @@
   <artifactId>software-project-v2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>software-project-v2</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
@@ -96,6 +95,12 @@
             <goals>
               <goal>report</goal>
             </goals>
+            <configuration>
+              <excludes>
+                <exclude>edu/najah/software/gui/**</exclude>
+                <exclude>edu/najah/software/ai/**</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
