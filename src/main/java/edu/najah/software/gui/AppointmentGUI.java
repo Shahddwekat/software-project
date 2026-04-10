@@ -535,7 +535,7 @@ public class AppointmentGUI extends JFrame {
 
             bookIdField.setText("APT-" + (int)(Math.random() * 9000 + 1000));
 
-//refresh slots table so it reflects the newly booked slot
+            //refresh slots table so it reflects the newly booked slot
             doViewSlots();
 
         } catch (Exception ex) {
@@ -554,7 +554,7 @@ public class AppointmentGUI extends JFrame {
 
         JPanel headerRow = new JPanel(new BorderLayout());
         headerRow.setBackground(BG);
-        headerRow.add(makePanelHeader("Manage Appointments", "View, modify, or cancel existing appointments"), BorderLayout.CENTER);
+        headerRow.add(makePanelHeader("Manage Appointments", "Click a row to select it, then modify or cancel"), BorderLayout.CENTER);
         JButton refreshBtn = makeSecondaryBtn("↻  Refresh Table");
         refreshBtn.addActionListener(e -> refreshAppointmentsTable());
         JPanel refreshWrap = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 8));
@@ -571,6 +571,19 @@ public class AppointmentGUI extends JFrame {
             public boolean isCellEditable(int r, int c) { return false; }
         };
         JTable table = makeStyledTable(apptTableModel);
+
+        // *** CLICK A ROW TO AUTO-FILL THE ID FIELDS ***
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    String selectedId = apptTableModel.getValueAt(row, 0).toString();
+                    modifyIdField.setText(selectedId);
+                    cancelIdField.setText(selectedId);
+                }
+            }
+        });
+
         JScrollPane scroll = new JScrollPane(table);
         scroll.setPreferredSize(new Dimension(0, 150));
         content.add(scroll, BorderLayout.NORTH);
@@ -612,7 +625,7 @@ public class AppointmentGUI extends JFrame {
         modCard.add(modAdminBtn);
         actions.add(modCard);
 
-      //cancel card
+        //cancel card
         JPanel cancelCard = makeCard(-1, -1);
         cancelCard.setLayout(new BoxLayout(cancelCard, BoxLayout.Y_AXIS));
         cancelCard.setBorder(new EmptyBorder(12, 14, 12, 14));
@@ -684,7 +697,7 @@ public class AppointmentGUI extends JFrame {
             manageStatusLabel.setText("✗ " + ex.getMessage());
             setStatus(ex.getMessage(), DANGER);
         }
-        }
+    }
 
     private void doCancel(boolean asAdmin) {
         try {
@@ -704,9 +717,10 @@ public class AppointmentGUI extends JFrame {
             manageStatusLabel.setForeground(DANGER);
             manageStatusLabel.setText("✗ " + ex.getMessage());
             setStatus(ex.getMessage(), DANGER);
-        }   }
+        }
+    }
 
-  //NOTIFICATIONS PANEL
+    //NOTIFICATIONS PANEL
 
     private JPanel buildNotifPanel() {
         JPanel outer = new JPanel(new BorderLayout());
@@ -747,7 +761,7 @@ public class AppointmentGUI extends JFrame {
         if (notifArea != null && notificationLog.isEmpty())
             notifArea.setText("No notifications yet.\n"); }
 
-  //AI SUMMARY PANEL
+    //AI SUMMARY PANEL
     private JPanel buildAIPanel() {
         JPanel outer = new JPanel(new BorderLayout());
         outer.setBackground(BG);
@@ -947,7 +961,7 @@ public class AppointmentGUI extends JFrame {
     }
 
     /**
-     * @param args command line arguments 
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
