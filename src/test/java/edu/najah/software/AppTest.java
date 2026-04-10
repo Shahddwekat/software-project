@@ -3,6 +3,7 @@ package edu.najah.software;
 import edu.najah.software.domain.Appointment;
 import edu.najah.software.domain.TimeSlot;
 import edu.najah.software.domain.appointmenttype.AppointmentType;
+import edu.najah.software.observer.EmailNotificationService;
 import edu.najah.software.observer.NotificationObserver;
 import edu.najah.software.observer.NotificationService;
 import edu.najah.software.repository.AppointmentRepository;
@@ -35,7 +36,6 @@ public class AppTest {
     private AppointmentService appointmentService;
     private AppointmentRepository repository;
 
-    
     @Mock
     private NotificationService notificationService;
 
@@ -420,7 +420,7 @@ public class AppTest {
                         "D3", LocalDateTime.now().plusDays(1), 30, 3, AppointmentType.URGENT)
         );
     }
-    
+
     //FOLLOW_UP
     @Test
     void testFollowUpAppointmentValid() {
@@ -573,7 +573,7 @@ public class AppTest {
         );
     }
 
-    // Domain model coverage  User Administrator Appointment
+    // Domain model coverage User Administrator Appointment
 
     @Test
     void testUserGetters() {
@@ -618,5 +618,41 @@ public class AppTest {
         Appointment a = appointmentService.bookAppointment(
                 "E3", LocalDateTime.now().plusDays(1), 60, 2);
         assertNull(a.getType());
+    }
+
+    // EmailNotificationService coverage
+
+    @Test
+    void testEmailNotificationServiceSendNotificationFailsGracefully() {
+        EmailNotificationService emailService = new EmailNotificationService("test@test.com");
+        Appointment a = appointmentService.bookAppointment(
+                "F1", LocalDateTime.now().plusDays(1), 60, 2);
+        assertDoesNotThrow(() -> emailService.sendNotification(a, "Test notification"));
+    }
+
+    @Test
+    void testEmailNotificationServiceWithTypedAppointment() {
+        EmailNotificationService emailService = new EmailNotificationService("test@test.com");
+        Appointment a = appointmentService.bookAppointment(
+                "F2", LocalDateTime.now().plusDays(1), 60, 2, AppointmentType.VIRTUAL);
+        assertDoesNotThrow(() -> emailService.sendNotification(a, "Virtual appointment reminder"));
+    }
+
+    @Test
+    void testEmailNotificationServiceWithCancelledStatus() {
+        EmailNotificationService emailService = new EmailNotificationService("test@test.com");
+        Appointment a = appointmentService.bookAppointment(
+                "F3", LocalDateTime.now().plusDays(1), 60, 2);
+        a.setStatus("Cancelled");
+        assertDoesNotThrow(() -> emailService.sendNotification(a, "Your appointment was cancelled"));
+    }
+
+    @Test
+    void testEmailNotificationServiceWithNullType() {
+        EmailNotificationService emailService = new EmailNotificationService("test@test.com");
+        Appointment a = appointmentService.bookAppointment(
+                "F4", LocalDateTime.now().plusDays(1), 60, 2);
+        assertNull(a.getType());
+        assertDoesNotThrow(() -> emailService.sendNotification(a, "General appointment reminder"));
     }
 }
