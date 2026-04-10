@@ -10,12 +10,6 @@ import edu.najah.software.service.SimpleAuthService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Entry point for the Appointment Scheduling System.
- *
- * @author Team
- * @version 1.0
- */
 public class App {
 
     public static void main(String[] args) {

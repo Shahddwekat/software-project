@@ -7,9 +7,10 @@ import java.time.LocalDateTime;
  * Represents a single appointment in the system
  * holds all the details we need when it is, how long it lasts
  * how many people are coming, what type it is and whether its confirmed or cancelled
- * @author Team
+ * @author Shahd and raana
  * @version 1.0
  */
+
 public class Appointment {
 
     /** unique ID so we can find this appointment later */
@@ -18,7 +19,7 @@ public class Appointment {
     /** The date and time this appointment is scheduled for */
     private LocalDateTime dateTime;
 
-    /** How long the appointment lasts, measured in minutes */
+    /** How long the appointment lasts measured in minutes */
     private int duration;
 
     /** How many people are attending this appointment*/
@@ -27,7 +28,7 @@ public class Appointment {
     /** The current state of the appointment Confirmed or Cancelled */
     private String status;
 
-    /** The category of this appointment like URGENT or VIRTUAL. */
+    /** The category of this appointment like URGENT or VIRTUAL*/
     private AppointmentType type;
 
     /**

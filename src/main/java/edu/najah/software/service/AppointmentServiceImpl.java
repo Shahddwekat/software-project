@@ -21,24 +21,15 @@ import java.util.Map;
  * It connects the repository the booking rules the type rules and the notification system
  * Uses the Strategy pattern to keep booking rules flexible
  * and the Observer pattern so multiple listeners can get notified
- * @author Team
+ * @author Shahd
  * @version 1.0
  */
 public class AppointmentServiceImpl implements AppointmentService {
 
-    /** Where we store and retrieve appointments */
     private final AppointmentRepository repository;
-
-    /** Handles checking if the admin is logged in */
     private final AuthService authService;
-
-    /** The general rules every appointment must pass */
     private final List<BookingRuleStrategy> bookingRules;
-
-    /** Everyone who wants to be notified when something happens */
     private final List<Observer> observers;
-
-    /** Maps each appointment type to its own specific rule */
     private final Map<AppointmentType, AppointmentTypeRule> typeRules;
 
     /**
@@ -103,7 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<TimeSlot> getAvailableSlots(LocalDate date) {
         if (!authService.isLoggedIn()) {
-            throw new IllegalStateException("Admin must be logged in to view available slots.");
+            throw new IllegalStateException("You must be logged in to view available slots.");
         }
         List<TimeSlot> dailyTemplate = buildDailyTemplate(date);
         List<TimeSlot> booked = repository.getBookedSlotsForDate(date);

@@ -3,9 +3,9 @@ package edu.najah.software.domain.appointmenttype;
 import edu.najah.software.domain.Appointment;
 
 /**
- * Rule for in-person appointments
- * Max duration 60 minutes, max 3 participants
- * @author Team
+ * Rule for in person appointments
+ * Max duration 60 minutes max 3 participants
+ * @author raana
  * @version 1.0
  */
 public class InPersonAppointmentRule implements AppointmentTypeRule {

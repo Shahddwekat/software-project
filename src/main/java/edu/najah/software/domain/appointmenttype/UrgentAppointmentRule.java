@@ -24,5 +24,4 @@ public class UrgentAppointmentRule implements AppointmentTypeRule {
     @Override
     public String getErrorMessage() {
         return "Urgent appointments must be at most 30 minutes with max 2 participants.";
-    }
-}
+    } }

@@ -14,7 +14,6 @@ public class AssessmentAppointmentRule implements AppointmentTypeRule {
     public AppointmentType getType() {
         return AppointmentType.ASSESSMENT;
     }
-
     // Assessments can be longer max 120 min and max 3 people
     @Override
     public boolean isValid(Appointment appointment) {

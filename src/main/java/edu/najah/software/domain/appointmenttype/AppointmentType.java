@@ -2,7 +2,7 @@ package edu.najah.software.domain.appointmenttype;
 
 /**
  * Enum representing all supported appointment types
- * @author Team
+ * @author shahd
  * @version 1.0
  */
 public enum AppointmentType {

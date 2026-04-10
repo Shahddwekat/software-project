@@ -25,21 +25,18 @@ public class User {
     	
         this.userId = userId;
         this.name = name;
-        this.email = email;
-    }
+        this.email = email; }
 
     /**
      * Returns the unique ID of this user.
      * @return the user ID
      */
     public String getUserId() { return userId; }
-
     /**
      * Returns the full name of this user
      * @return the user's name
      */
     public String getName() { return name; }
-
     /**
      * Returns the email address of this user
      * @return the user's email

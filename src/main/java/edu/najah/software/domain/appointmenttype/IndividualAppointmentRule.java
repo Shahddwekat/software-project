@@ -1,11 +1,10 @@
 package edu.najah.software.domain.appointmenttype;
 
 import edu.najah.software.domain.Appointment;
-
 /**
  * Rule for individual appointments
  * Max duration 60 minutes, exactly 1 participant
- * @author Team
+ * @author raana
  * @version 1.0
  */
 public class IndividualAppointmentRule implements AppointmentTypeRule {

@@ -44,6 +44,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- JavaMail for sending real email notifications via Gmail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+
     <!-- Mockito -->
     <dependency>
       <groupId>org.mockito</groupId>

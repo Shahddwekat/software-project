@@ -1,46 +1,52 @@
 package edu.najah.software.service;
-
 /**
- * A basic implementation of AuthService that uses hardcoded credentials
- * We just check if the username and password match what we have stored
- * Good enough for now — in a real system this would check a database
- * @author Team
+ * A basic implementation of AuthService supporting two roles admin and user
+ * Admin credentials: admin / admin123
+ * User credentials:  user / user123
+ * @author Shahd and Raana
  * @version 1.0
  */
 public class SimpleAuthService implements AuthService {
 
-    /** track ifsomeone is currently logged in*/
     private boolean loggedIn = false;
+    private boolean adminRole = false;
 
-    /** The only valid username in the system right now */
     private static final String ADMIN_USER = "admin";
-
-    /** The only valid password in the system right now */
     private static final String ADMIN_PASS = "admin123";
+    private static final String USER_USER  = "user";
+    private static final String USER_PASS  = "user123";
 
     /**
-     * Checks the given credentials against our hardcoded values
-     * If they match, we set the logged-in flag to true
+     * Checks credentials against admin and user accounts
+     * Sets role accordingly
      * @param username the username being entered
      * @param password the password being entered
-     * @return true if the credentials are correct, false otherwise
+     * @return true if credentials matched either account false otherwise
      */
     @Override
     public boolean login(String username, String password) {
         if (ADMIN_USER.equals(username) && ADMIN_PASS.equals(password)) {
             loggedIn = true;
+            adminRole = true;
+            return true;
+        }
+        if (USER_USER.equals(username) && USER_PASS.equals(password)) {
+            loggedIn = true;
+            adminRole = false;
             return true;
         }
         loggedIn = false;
+        adminRole = false;
         return false;
     }
 
     /**
-     * Clears the login state so the session is closed.
+     * Clears the login state and role
      */
     @Override
     public void logout() {
         loggedIn = false;
+        adminRole = false;
     }
 
     /**
@@ -50,5 +56,14 @@ public class SimpleAuthService implements AuthService {
     @Override
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    /**
+     * Tells us whether the current logged-in user is an admin
+     * @return true if admin false if regular user or not logged in
+     */
+    @Override
+    public boolean isAdmin() {
+        return loggedIn && adminRole;
     }
 }
