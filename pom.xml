@@ -16,8 +16,9 @@
   
           
    
-  <sonar.organization>appoinetment-najah-2026</sonar.organization>
-
+  <sonar.projectKey>Appoinetment-Najah-2026_software-project</sonar.projectKey>
+    <sonar.organization>appoinetment-najah-2026</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
   </properties>
 
