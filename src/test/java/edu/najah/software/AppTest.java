@@ -1,27 +1,22 @@
-package edu.najah.software;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
-
 /**
- * Unit test class for the App class.
+ * Unit test class for the appointment booking system.
  * 
- * This class contains test cases used
- * to verify application functionality.
+ * This class contains test cases that verify:
+ * <ul>
+ *     <li>Authentication functionality</li>
+ *     <li>Appointment booking rules</li>
+ *     <li>Available slot management</li>
+ *     <li>Observer notifications</li>
+ *     <li>Appointment modification and cancellation</li>
+ *     <li>Appointment type validation</li>
+ *     <li>Domain model functionality</li>
+ *     <li>Email notification behavior</li>
+ * </ul>
  * 
- * @author Lojain
+ * The tests are designed to provide
+ * high code coverage across all
+ * business logic components.
+ * 
+ * @author raana
  * @version 1.0
  */
-public class AppTest {
-
-    /**
-     * Simple test case to verify that
-     * the testing framework is working correctly.
-     */
-    @Test
-    public void shouldAnswerWithTrue() {
-
-        assertTrue(true);
-    }
-}

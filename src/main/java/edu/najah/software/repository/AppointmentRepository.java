@@ -1,38 +1,53 @@
 package edu.najah.software.repository;
 
-import java.util.ArrayList;
+import edu.najah.software.domain.Appointment;
+import edu.najah.software.domain.TimeSlot;
+
+import java.time.LocalDate;
 import java.util.List;
 
-import edu.najah.software.domain.Appointment;
-
 /**
- * Repository class for managing appointments.
+ * Repository interface for managing appointments.
  * 
- * This class stores appointment objects
- * and provides methods to save and retrieve them.
+ * This interface defines the operations required
+ * for storing and retrieving appointment data.
  * 
- * @author Lojain
+ * Different storage implementations such as
+ * in-memory storage or databases can implement
+ * this interface.
+ * 
+ * @author raana
  * @version 1.0
  */
-public class AppointmentRepository {
-
-    private List<Appointment> appointments = new ArrayList<>();
+public interface AppointmentRepository {
 
     /**
-     * Saves an appointment to the repository.
+     * Saves an appointment.
      * 
-     * @param appointment the appointment to save
+     * @param appointment appointment to save
      */
-    public void save(Appointment appointment) {
-        appointments.add(appointment);
-    }
+    void save(Appointment appointment);
 
     /**
      * Returns all stored appointments.
      * 
      * @return list of appointments
      */
-    public List<Appointment> getAll() {
-        return appointments;
-    }
+    List<Appointment> getAll();
+
+    /**
+     * Returns all booked time slots
+     * for a specific date.
+     * 
+     * @param date required date
+     * @return list of booked time slots
+     */
+    List<TimeSlot> getBookedSlotsForDate(LocalDate date);
+
+    /**
+     * Saves a booked time slot.
+     * 
+     * @param slot booked time slot
+     */
+    void saveBookedSlot(TimeSlot slot);
 }

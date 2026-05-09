@@ -1,0 +1,113 @@
+package edu.najah.software.observer;
+
+import edu.najah.software.domain.Appointment;
+import java.io.UnsupportedEncodingException;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.time.format.DateTimeFormatter;
+import java.util.Properties;
+
+/**
+ * Sends real email notifications via Gmail SMTP when appointments are booked modified or cancelled
+ * @author Shahd and Raana
+ * @version 1.0
+ */
+public class EmailNotificationService implements NotificationService {
+
+	private static final String SENDER_EMAIL;
+	private static final String SENDER_PASSWORD;
+
+	static {
+	    java.util.Properties config = new java.util.Properties();
+	    try (java.io.InputStream in = new java.io.FileInputStream("email.properties")) {
+	        config.load(in);
+	    } catch (Exception e) {
+	        System.err.println("email.properties not found — email notifications disabled");
+	    }
+	    SENDER_EMAIL    = config.getProperty("email.sender", "");
+	    SENDER_PASSWORD = config.getProperty("email.password", "");
+	}
+	
+    /** The email address that will receive the appointment notifications */
+    private final String recipientEmail;
+
+    public EmailNotificationService(String recipientEmail) {
+        this.recipientEmail = recipientEmail;
+    }
+
+    @Override
+    public void sendNotification(Appointment appointment, String message) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+            }
+        });
+
+        try {
+            Message email = new MimeMessage(session);
+            try {
+                email.setFrom(new InternetAddress(SENDER_EMAIL, "Appointment Scheduler App"));
+            } catch (UnsupportedEncodingException ex) {
+                email.setFrom(new InternetAddress(SENDER_EMAIL));
+            }           
+            email.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            email.setSubject("Appointment Notification — " + appointment.getId());
+            email.setContent(buildHtmlBody(appointment, message), "text/html; charset=utf-8");
+            Transport.send(email);
+            System.out.println("Email sent to " + recipientEmail + " for appointment " + appointment.getId());
+        } catch (MessagingException e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Builds a clean HTML email body with the full appointment details
+     * @param appointment the appointment to include in the email
+     * @param message the event description
+     * @return an HTML string ready to be sent as the email body
+     */
+    private String buildHtmlBody(Appointment appointment, String message) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("EEEE, MMMM dd yyyy 'at' HH:mm");
+        String type = appointment.getType() != null ? appointment.getType().toString() : "General";
+        String statusColor = "Confirmed".equals(appointment.getStatus()) ? "#22c55e" : "#ef4444";
+
+        return "<div style='font-family: Arial, sans-serif; max-width: 520px; margin: auto;'>"
+            + "<div style='background: #1e2840; padding: 24px 32px;'>"
+            + "<h2 style='color: white; margin: 0;'>AppScheduler</h2>"
+            + "<p style='color: #94a3b8; margin: 4px 0 0;'>Appointment Scheduling System</p>"
+            + "</div>"
+            + "<div style='padding: 28px 32px; background: #f8fafc;'>"
+            + "<p style='font-size: 15px; color: #374151;'>" + message + "</p>"
+            + "<div style='background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-top: 16px;'>"
+            + "<table style='width: 100%; font-size: 14px; color: #374151;'>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Appointment ID</td>"
+            + "<td style='padding: 6px 0; font-weight: bold;'>" + appointment.getId() + "</td></tr>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Type</td>"
+            + "<td style='padding: 6px 0;'>" + type + "</td></tr>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Date &amp; Time</td>"
+            + "<td style='padding: 6px 0;'>" + appointment.getDateTime().format(fmt) + "</td></tr>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Duration</td>"
+            + "<td style='padding: 6px 0;'>" + appointment.getDuration() + " minutes</td></tr>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Participants</td>"
+            + "<td style='padding: 6px 0;'>" + appointment.getParticipants() + "</td></tr>"
+            + "<tr><td style='padding: 6px 0; color: #6b7280;'>Status</td>"
+            + "<td style='padding: 6px 0;'><span style='background:" + statusColor
+            + "; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px;'>"
+            + appointment.getStatus() + "</span></td></tr>"
+            + "</table>"
+            + "</div>"
+            + "<p style='font-size: 12px; color: #9ca3af; margin-top: 24px;'>"
+            + "This is an automated message from the Appointment Scheduling System.</p>"
+            + "</div>"
+            + "</div>";
+    }
+}

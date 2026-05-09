@@ -3,23 +3,33 @@ package edu.najah.software.service;
 /**
  * Interface for authentication operations.
  * 
- * This interface defines methods for user login,
- * logout, and authentication status checking.
+ * This interface defines methods for:
+ * <ul>
+ *     <li>User login</li>
+ *     <li>User logout</li>
+ *     <li>Authentication status checking</li>
+ *     <li>Administrator privilege checking</li>
+ * </ul>
  * 
- * @author Lojain
+ * Any authentication service implementation
+ * must provide these operations.
+ * 
+ * @author raana
  * @version 1.0
  */
 public interface AuthService {
 
     /**
-     * Authenticates a user using username and password.
+     * Authenticates a user using
+     * a username and password.
      * 
-     * @param username the username of the user
-     * @param password the user's password
-     * @return true if login is successful,
+     * @param username entered username
+     * @param password entered password
+     * @return true if login succeeds,
      *         otherwise false
      */
-    boolean login(String username, String password);
+    boolean login(String username,
+                  String password);
 
     /**
      * Logs out the currently authenticated user.
@@ -27,10 +37,20 @@ public interface AuthService {
     void logout();
 
     /**
-     * Checks whether a user is currently logged in.
+     * Checks whether a user
+     * is currently logged in.
      * 
-     * @return true if a user is logged in,
+     * @return true if logged in,
      *         otherwise false
      */
     boolean isLoggedIn();
+
+    /**
+     * Checks whether the current user
+     * has administrator privileges.
+     * 
+     * @return true if the user is an administrator,
+     *         otherwise false
+     */
+    boolean isAdmin();
 }
