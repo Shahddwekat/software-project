@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author Shahd and Raana
  * @version 1.0
  */
-public class EmailNotificationService implements NotificationService {
+public class EmailNotificationService_old implements NotificationService {
 
 	private static final String SENDER_EMAIL;
 	private static final String SENDER_PASSWORD;
@@ -32,7 +32,7 @@ public class EmailNotificationService implements NotificationService {
     /** The email address that will receive the appointment notifications */
     private final String recipientEmail;
 
-    public EmailNotificationService(String recipientEmail) {
+    public EmailNotificationService_old(String recipientEmail)  {
         this.recipientEmail = recipientEmail;
     }
 

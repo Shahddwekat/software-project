@@ -3,7 +3,7 @@ package edu.najah.software.gui;
 
 import edu.najah.software.ai.AISummaryService;
 import edu.najah.software.domain.Appointment;
-import edu.najah.software.observer.EmailNotificationService;
+//import edu.najah.software.observer.EmailNotificationService;
 import edu.najah.software.domain.TimeSlot;
 import edu.najah.software.domain.appointmenttype.AppointmentType;
 import edu.najah.software.observer.NotificationObserver;
@@ -520,7 +520,11 @@ public class AppointmentGUI extends JFrame {
             bookStatusLabel.setForeground(SUCCESS);
             bookStatusLabel.setText("✓ Booked! ID: " + appt.getId() + " | Status: " + appt.getStatus());
             setStatus("Appointment booked successfully: " + appt.getId(), SUCCESS);
+           
+         // Email notification temporarily disabled
+      
 
+/*
             String recipient = recipientEmailField.getText().trim();
             if (!recipient.isEmpty() && recipient.contains("@") && !recipient.equals("recipient@example.com")) {
                 new Thread(() -> {
@@ -532,7 +536,7 @@ public class AppointmentGUI extends JFrame {
                     }
                 }).start();
             }
-
+*/
             bookIdField.setText("APT-" + (int)(Math.random() * 9000 + 1000));
 
             //refresh slots table so it reflects the newly booked slot
