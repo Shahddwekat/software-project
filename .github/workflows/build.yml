@@ -45,7 +45,8 @@ jobs:
             -Dsonar.organization=appoitmentnajah2026
             -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-            -Dsonar.coverage.exclusions=**/gui/**,**/ai/**
+            -Dsonar.coverage.exclusions=**/gui/**,**/ai/**,**/test/**
+            -Dsonar.exclusions=**/test/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
