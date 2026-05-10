@@ -43,7 +43,7 @@ jobs:
           args: >
             -Dsonar.projectKey=appoitmentNajah2026_software-project
             -Dsonar.organization=appoitmentnajah2026
-
+            -Dsonar.java.binaries=target/classes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
