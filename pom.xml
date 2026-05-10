@@ -21,6 +21,7 @@
 <sonar.organization>appoitmentnajah2026</sonar.organization> 
 <sonar.projectKey>appoitmentNajah2026_software-project</sonar.projectKey> 
 <sonar.host.url>https://sonarcloud.io</sonar.host.url> 
+<sonar.java.binaries>target/classes</sonar.java.binaries>
 
   </properties>
 
