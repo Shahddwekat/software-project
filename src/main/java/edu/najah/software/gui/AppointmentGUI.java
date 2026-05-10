@@ -18,6 +18,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,6 +48,9 @@ public class AppointmentGUI extends JFrame {
     private static final Color TEXT_PRI = new Color(17, 24, 39);
     private static final Color TEXT_SEC = new Color(107, 114, 128);
     private static final Color BORDER_C = new Color(229, 231, 235);
+
+    // SecureRandom instance (replaces Math.random())
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     //services
     private final AuthService authService;
@@ -435,7 +439,7 @@ public class AppointmentGUI extends JFrame {
         gc.gridx = 0; gc.gridy = 0; gc.weightx = 0;
         card.add(makeLabel("Appointment ID", TEXT_PRI), gc);
         gc.gridx = 1; gc.weightx = 1;
-        bookIdField = makeTextField("APT-" + (int)(Math.random() * 9000 + 1000));
+        bookIdField = makeTextField("APT-" + (SECURE_RANDOM.nextInt(9000) + 1000));
         card.add(bookIdField, gc);
 
         gc.gridx = 0; gc.gridy = 1; gc.weightx = 0;
@@ -522,8 +526,6 @@ public class AppointmentGUI extends JFrame {
             setStatus("Appointment booked successfully: " + appt.getId(), SUCCESS);
            
          // Email notification temporarily disabled
-      
-
 /*
             String recipient = recipientEmailField.getText().trim();
             if (!recipient.isEmpty() && recipient.contains("@") && !recipient.equals("recipient@example.com")) {
@@ -537,7 +539,7 @@ public class AppointmentGUI extends JFrame {
                 }).start();
             }
 */
-            bookIdField.setText("APT-" + (int)(Math.random() * 9000 + 1000));
+            bookIdField.setText("APT-" + (SECURE_RANDOM.nextInt(9000) + 1000));
 
             //refresh slots table so it reflects the newly booked slot
             doViewSlots();
