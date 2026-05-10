@@ -38,7 +38,7 @@ jobs:
         run: mvn -B verify --file pom.xml
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@df05b576041392786f599025c54155addf7f822c
         with:
           args: >
             -Dsonar.projectKey=appoitmentNajah2026_software-project
