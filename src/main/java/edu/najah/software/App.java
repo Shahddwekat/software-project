@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
  *     <li>Logout functionality</li>
  * </ul>
  * 
- * @author raana
+ * @author shahd
  * @version 1.0
  */
 public class App {

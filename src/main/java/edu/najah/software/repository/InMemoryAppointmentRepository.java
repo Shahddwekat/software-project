@@ -16,7 +16,7 @@ import java.util.List;
  * Data is not permanently saved and will be lost
  * when the application stops.
  * 
- * @author raana
+ * @author shahd
  * @version 1.0
  */
 public class InMemoryAppointmentRepository

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * including date, duration, participants,
  * appointment type, and current status.
  * 
- * @author raana
+ * @author shahd
  * @version 1.0
  */
 public class Appointment {
