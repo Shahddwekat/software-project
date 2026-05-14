@@ -16,7 +16,7 @@ import java.util.List;
  * in-memory storage or databases can implement
  * this interface.
  * 
- * @author raana
+ * @author xhahd
  * @version 1.0
  */
 public interface AppointmentRepository {
